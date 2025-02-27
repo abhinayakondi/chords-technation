@@ -1,5 +1,10 @@
 # CHORDS Web Portal
 
+Team Members: 
+Abhinaya,
+Ameera, 
+Abdallah
+
 CHORDS (Canada Health Operations & Record Data System) is a secure web portal for managing patient health records and consent management.
 
 ## Features
