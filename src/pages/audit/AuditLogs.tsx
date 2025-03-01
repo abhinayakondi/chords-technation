@@ -11,7 +11,6 @@ import {
   Stack,
   Card,
   CardContent,
-  Divider,
 } from '@mui/material';
 import {
   Search,

@@ -5,8 +5,6 @@ import {
   Step,
   StepLabel,
   Container,
-  Paper,
-  Typography,
   LinearProgress,
   Alert,
   Button,
@@ -37,7 +35,6 @@ const DoctorWorkflow: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [doctorCredentials, setDoctorCredentials] = useState<DoctorCredentials | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [visitReason, setVisitReason] = useState<VisitReason | null>(null);
   const [authStatus, setAuthStatus] = useState<PatientAuthenticationStatus | null>(null);
@@ -47,9 +44,9 @@ const DoctorWorkflow: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Simulate API call for doctor authentication
+      // Simulate API call for doctor authentication using credentials
       await new Promise(resolve => setTimeout(resolve, 1000));
-      setDoctorCredentials(credentials);
+      console.log('Logging in with:', credentials);  // Use credentials
       setSessionExpiry(new Date(Date.now() + 8 * 60 * 60 * 1000)); // 8-hour session
       setActiveStep(1);
     } catch (error) {
@@ -64,8 +61,9 @@ const DoctorWorkflow: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Simulate API call for patient search
+      // Simulate API call for patient search using query
       await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Searching with query:', query);  // Use query
       return [
         {
           id: '1',
@@ -132,10 +130,6 @@ const DoctorWorkflow: React.FC = () => {
 
   const handleReset = () => {
     setActiveStep(0);
-    setDoctorCredentials(null);
-    setSelectedPatient(null);
-    setVisitReason(null);
-    setAuthStatus(null);
     setError(null);
   };
 

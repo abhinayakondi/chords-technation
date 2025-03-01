@@ -16,6 +16,11 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Badge,
+  useTheme,
+  useMediaQuery,
+  Tooltip,
+  Button,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -27,10 +32,13 @@ import {
   AccountCircle,
   Warning,
   Notifications,
+  ChevronLeft,
+  KeyboardArrowDown,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -42,70 +50,147 @@ const navigationItems = [
   { text: 'Consent Settings', icon: Settings, path: '/consent-management' },
   { text: 'Emergency Access', icon: Warning, path: '/emergency-access' },
   { text: 'Audit Logs', icon: Assessment, path: '/audit-logs' },
-  { text: 'Notifications', icon: Notifications, path: '/notifications' },
+  { text: 'Notifications', icon: Notifications, path: '/notifications', badge: 3 },
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { logout } = useAuth();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setProfileMenuAnchor(event.currentTarget);
   };
 
   const handleProfileMenuClose = () => {
-    setAnchorEl(null);
+    setProfileMenuAnchor(null);
   };
 
   const handleLogout = () => {
-    // Handle logout logic here
     handleProfileMenuClose();
+    logout();
     navigate('/login');
   };
 
   const drawer = (
-    <Box>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Avatar
+          sx={{
+            width: 40,
+            height: 40,
+            bgcolor: 'primary.main',
+            fontSize: '1.5rem',
+          }}
+        >
+          C
+        </Avatar>
+        <Typography variant="h6" noWrap component="div" fontWeight="bold">
           CHORDS
         </Typography>
-      </Toolbar>
+        {isMobile && (
+          <IconButton
+            onClick={handleDrawerToggle}
+            sx={{ ml: 'auto' }}
+            edge="end"
+          >
+            <ChevronLeft />
+          </IconButton>
+        )}
+      </Box>
       <Divider />
-      <List>
+      <List sx={{ flex: 1, px: 2, py: 1 }}>
         {navigationItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
+          <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
             <ListItemButton
               selected={location.pathname === item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                navigate(item.path);
+                if (isMobile) setMobileOpen(false);
+              }}
+              sx={{
+                borderRadius: 2,
+                '&.Mui-selected': {
+                  bgcolor: 'primary.light',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                  },
+                  '& .MuiListItemIcon-root': {
+                    color: 'white',
+                  },
+                },
+              }}
             >
-              <ListItemIcon>
-                <item.icon />
+              <ListItemIcon
+                sx={{
+                  minWidth: 40,
+                  color: location.pathname === item.path ? 'white' : 'inherit',
+                }}
+              >
+                {item.badge ? (
+                  <Badge badgeContent={item.badge} color="error">
+                    <item.icon />
+                  </Badge>
+                ) : (
+                  <item.icon />
+                )}
               </ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText
+                primary={item.text}
+                primaryTypographyProps={{
+                  fontWeight: location.pathname === item.path ? 600 : 400,
+                }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
+      <Divider sx={{ mt: 'auto' }} />
+      <Box sx={{ p: 2 }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          color="primary"
+          startIcon={<Settings />}
+          onClick={() => navigate('/settings')}
+          sx={{ mb: 1 }}
+        >
+          Settings
+        </Button>
+        <Button
+          fullWidth
+          variant="outlined"
+          color="error"
+          startIcon={<Logout />}
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </Box>
     </Box>
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -115,18 +200,39 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            size="large"
-            edge="end"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleProfileMenuOpen}
-            color="inherit"
-          >
-            <Avatar sx={{ width: 32, height: 32 }}>JD</Avatar>
-          </IconButton>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Tooltip title="3 new notifications">
+              <IconButton color="inherit" size="large">
+                <Badge badgeContent={3} color="error">
+                  <Notifications />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+            
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                cursor: 'pointer',
+              }}
+              onClick={handleProfileMenuOpen}
+            >
+              <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main' }}>
+                JD
+              </Avatar>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Typography variant="subtitle1" fontWeight={600}>
+                  John Doe
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Patient
+                </Typography>
+              </Box>
+              <KeyboardArrowDown />
+            </Box>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -139,7 +245,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
@@ -172,6 +278,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          minHeight: '100vh',
+          bgcolor: 'background.default',
         }}
       >
         <Toolbar />
@@ -179,21 +287,34 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </Box>
 
       <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(anchorEl)}
+        id="profile-menu"
+        anchorEl={profileMenuAnchor}
+        open={Boolean(profileMenuAnchor)}
         onClose={handleProfileMenuClose}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            mt: 1.5,
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
       >
-        <MenuItem onClick={handleProfileMenuClose}>
+        <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/profile'); }}>
           <ListItemIcon>
             <AccountCircle fontSize="small" />
           </ListItemIcon>
