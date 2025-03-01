@@ -6,7 +6,6 @@ import {
   Box,
   TextField,
   InputAdornment,
-  IconButton,
   Tabs,
   Tab,
   FormControl,
@@ -15,6 +14,7 @@ import {
   MenuItem,
   Chip,
   Stack,
+  SelectChangeEvent,
 } from '@mui/material';
 import { Search, FilterList } from '@mui/icons-material';
 import DashboardLayout from '../../components/layout/DashboardLayout';
@@ -52,8 +52,8 @@ const ConsentManagement: React.FC = () => {
     setTabValue(newValue);
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const value = event.target.value as string;
+  const handleFilterChange = (event: SelectChangeEvent) => {
+    const value = event.target.value;
     setFilterType(value);
     if (value !== 'all' && !activeFilters.includes(value)) {
       setActiveFilters([...activeFilters, value]);
@@ -96,7 +96,7 @@ const ConsentManagement: React.FC = () => {
                 labelId="filter-type-label"
                 value={filterType}
                 label="Filter By"
-                onChange={handleFilterChange as any}
+                onChange={handleFilterChange}
                 startAdornment={
                   <InputAdornment position="start">
                     <FilterList />

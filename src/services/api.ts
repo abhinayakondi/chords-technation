@@ -5,6 +5,10 @@ interface ApiResponse<T> {
   error?: string;
 }
 
+interface RequestBody {
+  [key: string]: unknown;
+}
+
 export async function get<T>(endpoint: string): Promise<ApiResponse<T>> {
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -28,7 +32,7 @@ export async function get<T>(endpoint: string): Promise<ApiResponse<T>> {
   }
 }
 
-export async function post<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
+export async function post<T>(endpoint: string, body: RequestBody): Promise<ApiResponse<T>> {
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
@@ -53,7 +57,7 @@ export async function post<T>(endpoint: string, body: any): Promise<ApiResponse<
   }
 }
 
-export async function put<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
+export async function put<T>(endpoint: string, body: RequestBody): Promise<ApiResponse<T>> {
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
