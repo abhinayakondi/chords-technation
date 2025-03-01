@@ -1,30 +1,15 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-  IconButton,
-  InputAdornment,
-  Link,
-  Alert,
-  CircularProgress,
-  Tabs,
-  Tab,
-} from '@mui/material';
+import { Box, Button, Card, CardContent, TextField, Typography, IconButton, InputAdornment, Link, Alert, CircularProgress, Tabs, Tab } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { testAccounts } from '../../utils/testData';
+import { GoogleLogin } from 'react-google-login';
 
 const validationSchema = yup.object({
-  username: yup
-    .string()
-    .required('Username is required'),
+  username: yup.string().required('Username is required'),
   password: yup
     .string()
     .min(8, 'Password should be of minimum 8 characters length')
@@ -37,7 +22,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [roleTab, setRoleTab] = useState<'patient' | 'doctor' | 'admin'>('patient');
-  
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -88,6 +72,13 @@ const LoginPage: React.FC = () => {
     });
   };
 
+  // Google Login Success Handler
+  const handleGoogleLoginSuccess = (response: any) => {
+    const { tokenId } = response;
+    console.log("Google login successful", response);
+    // Send token to backend for verification
+  };
+
   return (
     <Box
       sx={{
@@ -135,7 +126,6 @@ const LoginPage: React.FC = () => {
                   helperText={formik.touched.username && formik.errors.username}
                   sx={{ mb: 2 }}
                 />
-
                 <TextField
                   fullWidth
                   id="password"
@@ -207,6 +197,30 @@ const LoginPage: React.FC = () => {
               )}
             </Button>
 
+            {/* Google Login Button */}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                mb: 2,
+              }}
+            >
+              <GoogleLogin
+                clientId="368408079437-7te3d4noe5cce05eiob0s2v6uojm9d60.apps.googleusercontent.com"
+                buttonText="Continue with Google"
+                onSuccess={handleGoogleLoginSuccess}
+                cookiePolicy="single_host_origin"
+                style={{
+                  width: '100%',
+                  height: '56px',
+                  fontSize: '16px',
+                  borderRadius: '4px',
+                }}
+              />
+            </Box>
+
             {!showMFA && (
               <Box sx={{ textAlign: 'center' }}>
                 <Link href="/forgot-password" variant="body2" sx={{ mb: 1, display: 'block' }}>
@@ -227,4 +241,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage; 
+export default LoginPage;
