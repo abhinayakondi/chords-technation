@@ -208,7 +208,7 @@ const LoginPage: React.FC = () => {
               }}
             >
               <GoogleLogin
-                clientId="YOUR_GOOGLE_CLIENT_ID"
+                clientId="368408079437-7te3d4noe5cce05eiob0s2v6uojm9d60.apps.googleusercontent.com"
                 buttonText="Continue with Google"
                 onSuccess={handleGoogleLoginSuccess}
                 cookiePolicy="single_host_origin"
