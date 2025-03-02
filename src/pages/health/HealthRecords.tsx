@@ -192,7 +192,13 @@ const HealthRecords: React.FC = () => {
           <Button
             variant="contained"
             startIcon={<FileUpload />}
-            sx={{ whiteSpace: 'nowrap' }}
+            sx={{ 
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              justifyContent: 'flex', // Moves content to the right
+              width: '30%', // Ensures the button has enough space for alignment
+              height: 52,
+            }}
           >
             Upload Record
           </Button>

@@ -29,7 +29,7 @@ import QuickActions from '../../components/dashboard/QuickActions';
 
 // Mock data - In real app, this would come from an API
 const mockPatientData = {
-  name: 'John Doe',
+  name: 'Alex Morgan',
   lastLogin: '2024-02-20T10:30:00',
   notifications: 3,
   consentStatus: {

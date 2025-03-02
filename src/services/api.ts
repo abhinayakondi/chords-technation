@@ -1,107 +1,26 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import axios from "axios";
 
-interface ApiResponse<T> {
-  data: T;
-  error?: string;
-}
+// Replace with the actual backend API URL
+const API_BASE_URL = "https://healthcare.googleapis.com";
 
-interface RequestBody {
-  [key: string]: unknown;
-}
-
-export async function get<T>(endpoint: string): Promise<ApiResponse<T>> {
+// Fetch data from API
+export const fetchData = async (endpoint: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { data };
+    const response = await axios.get(`${API_BASE_URL}/${endpoint}`);
+    return response.data;
   } catch (error) {
-    return {
-      data: {} as T,
-      error: error instanceof Error ? error.message : 'An unknown error occurred',
-    };
+    console.error("Error fetching data:", error);
+    throw error; // Rethrow the error for proper handling
   }
-}
+};
 
-export async function post<T>(endpoint: string, body: RequestBody): Promise<ApiResponse<T>> {
+// Post data to API (if needed)
+export const postData = async (endpoint: string, data: object) => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { data };
+    const response = await axios.post(`${API_BASE_URL}/${endpoint}`, data);
+    return response.data;
   } catch (error) {
-    return {
-      data: {} as T,
-      error: error instanceof Error ? error.message : 'An unknown error occurred',
-    };
+    console.error("Error posting data:", error);
+    throw error;
   }
-}
-
-export async function put<T>(endpoint: string, body: RequestBody): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    return {
-      data: {} as T,
-      error: error instanceof Error ? error.message : 'An unknown error occurred',
-    };
-  }
-}
-
-export async function del<T>(endpoint: string): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    return {
-      data: {} as T,
-      error: error instanceof Error ? error.message : 'An unknown error occurred',
-    };
-  }
-} 
+};

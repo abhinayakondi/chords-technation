@@ -83,19 +83,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Avatar
-          sx={{
-            width: 40,
-            height: 40,
-            bgcolor: 'primary.main',
-            fontSize: '1.5rem',
+        <Box component="img"
+          src="/chords_full_logo.svg"
+          alt="Chords Logo"
+          sx={{ 
+            height: 20, 
+            width: "auto" ,
+            ml:5,
+            display: "flex",
+            alignItems: "center"
           }}
-        >
-          C
-        </Avatar>
-        <Typography variant="h6" noWrap component="div" fontWeight="bold">
-          CHORDS
-        </Typography>
+        />
         {isMobile && (
           <IconButton
             onClick={handleDrawerToggle}
